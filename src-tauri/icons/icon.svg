@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22d3ee" />
+      <stop offset="100%" stop-color="#0891b2" />
+    </linearGradient>
+    <linearGradient id="g2" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+    <filter id="f1" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="15" />
+      <feOffset dx="0" dy="10" result="offsetblur" />
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.5" />
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background Base -->
+  <rect x="112" y="112" width="800" height="800" rx="200" ry="200" fill="url(#g2)" filter="url(#f1)" />
+  
+  <!-- Outer Ring -->
+  <circle cx="512" cy="512" r="300" stroke="url(#g1)" stroke-width="40" fill="none" opacity="0.2" />
+  
+  <!-- Circuit Paths -->
+  <path d="M512 212 V350 M512 674 V812 M212 512 H350 M674 512 H812" stroke="#22d3ee" stroke-width="30" stroke-linecap="round" opacity="0.6" />
+  
+  <!-- Central Switch Element -->
+  <rect x="362" y="362" width="300" height="300" rx="60" fill="none" stroke="url(#g1)" stroke-width="30" />
+  <circle cx="512" cy="512" r="80" fill="#22d3ee" />
+  
+  <!-- Power Glow -->
+  <circle cx="512" cy="512" r="40" fill="#fff" opacity="0.6">
+    <animate attributeName="opacity" values="0.6;0.9;0.6" dur="3s" repeatCount="indefinite" />
+  </circle>
+</svg>
