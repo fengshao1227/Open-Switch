@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Plus, Trash2, Edit, AlertTriangle, Box, Sparkles, Eye, EyeOff, Settings, Globe, Server, FileText, Download, Check, Github, ExternalLink } from "lucide-react";
+import { getCurrentWindow } from "@tauri-apps/api/window";
+import { Plus, Trash2, Edit, AlertTriangle, Box, Sparkles, Eye, EyeOff, Settings, Globe, Server, FileText, Download, Check, Github, ExternalLink, Minus, Square, X } from "lucide-react";
 import { configApi, authApi, mcpApi, promptsApi } from "@/lib/api";
 import type { ProviderConfig, OpenCodeModel, SdkType, McpServer, McpServerType, Prompt } from "@/types";
 import { SDK_OPTIONS } from "@/types";
@@ -550,19 +551,62 @@ function App() {
   return (
     <div className="min-h-screen w-full bg-background font-sans selection:bg-primary/20 text-foreground overflow-x-hidden">
       <div className="fixed inset-0 bg-grid-pattern pointer-events-none opacity-20" />
-      
-      <div className="relative mx-auto max-w-4xl space-y-8 p-6 lg:p-12">
-        <header className="glass-panel flex items-center justify-between rounded-2xl p-6 transition-all hover:neon-glow">
-          <div className="flex items-center gap-5">
+
+      {/* 顶部拖拽条 */}
+      <div className="fixed top-0 left-0 right-0 h-10 z-[10000] flex items-center justify-between px-4 bg-background/50 backdrop-blur-sm border-b border-border/50">
+        {/* 左侧：窗口控制按钮 */}
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              getCurrentWindow().close();
+            }}
+            className="h-3 w-3 rounded-full bg-red-500 hover:bg-red-600 transition-colors cursor-pointer"
+            style={{ minWidth: '12px', minHeight: '12px' }}
+            aria-label="Close"
+          />
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              getCurrentWindow().minimize();
+            }}
+            className="h-3 w-3 rounded-full bg-yellow-500 hover:bg-yellow-600 transition-colors cursor-pointer"
+            style={{ minWidth: '12px', minHeight: '12px' }}
+            aria-label="Minimize"
+          />
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              getCurrentWindow().toggleMaximize();
+            }}
+            className="h-3 w-3 rounded-full bg-green-500 hover:bg-green-600 transition-colors cursor-pointer"
+            style={{ minWidth: '12px', minHeight: '12px' }}
+            aria-label="Maximize"
+          />
+        </div>
+        {/* 中间：可拖拽标题区域 */}
+        <div data-tauri-drag-region className="flex-1 text-center text-sm font-medium text-muted-foreground cursor-move">
+          Open Switch
+        </div>
+        {/* 右侧：占位 */}
+        <div className="w-[60px]" />
+      </div>
+
+      <div className="relative mx-auto max-w-4xl space-y-6 p-4 pt-12 sm:p-6 sm:pt-14 lg:p-12 lg:pt-16">
+        <header className="glass-panel flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-2xl p-4 sm:p-6 transition-all hover:neon-glow titlebar-no-drag">
+          <div className="flex items-center gap-4 sm:gap-5">
             <button
               onClick={() => setSettingsOpen(true)}
-              className="group flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 ring-1 ring-primary/20 transition-all hover:bg-primary/20 hover:scale-110 active:scale-95 cursor-pointer"
+              className="group flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-primary/10 ring-1 ring-primary/20 transition-all hover:bg-primary/20 hover:scale-110 active:scale-95 cursor-pointer"
             >
-              <Sparkles className="h-6 w-6 text-primary transition-transform group-hover:rotate-12" />
+              <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-primary transition-transform group-hover:rotate-12" />
             </button>
             <div className="space-y-0.5">
-              <h1 className="text-2xl font-bold tracking-tight text-foreground/90">{t("app.title")}</h1>
-              <p className="text-sm font-medium text-muted-foreground/80">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground/90">{t("app.title")}</h1>
+              <p className="text-xs sm:text-sm font-medium text-muted-foreground/80">
                 {t("app.subtitle")}
               </p>
             </div>
@@ -570,7 +614,7 @@ function App() {
           {activeTab === "providers" && (
             <Button 
               onClick={() => setIsAddOpen(true)} 
-              className="h-10 px-6 font-semibold shadow-lg shadow-primary/20 transition-all hover:shadow-primary/40 hover:scale-105 active:scale-95"
+              className="h-9 sm:h-10 px-4 sm:px-6 font-semibold shadow-lg shadow-primary/20 transition-all hover:shadow-primary/40 hover:scale-105 active:scale-95 w-full sm:w-auto"
             >
               <Plus className="mr-2 h-4 w-4" />
               {t("provider.add")}
@@ -579,15 +623,36 @@ function App() {
           {activeTab === "mcp" && (
             <Button 
               onClick={() => setIsMcpAddOpen(true)} 
-              className="h-10 px-6 font-semibold shadow-lg shadow-primary/20 transition-all hover:shadow-primary/40 hover:scale-105 active:scale-95"
+              className="h-9 sm:h-10 px-4 sm:px-6 font-semibold shadow-lg shadow-primary/20 transition-all hover:shadow-primary/40 hover:scale-105 active:scale-95 w-full sm:w-auto"
             >
               <Plus className="mr-2 h-4 w-4" />
               {t("mcp.add")}
             </Button>
           )}
+          {activeTab === "prompts" && (
+            <div className="flex gap-2 w-full sm:w-auto">
+              <Button 
+                onClick={() => importPromptMutation.mutate()} 
+                variant="outline"
+                className="h-9 sm:h-10 px-3 sm:px-4 font-semibold border-primary/20 hover:bg-primary/10 hover:text-primary flex-1 sm:flex-none"
+                disabled={importPromptMutation.isPending}
+              >
+                <Download className="mr-2 h-4 w-4" />
+                <span className="hidden sm:inline">{t("prompts.import")}</span>
+                <span className="sm:hidden">{t("prompts.import")}</span>
+              </Button>
+              <Button 
+                onClick={() => setIsPromptAddOpen(true)} 
+                className="h-9 sm:h-10 px-4 sm:px-6 font-semibold shadow-lg shadow-primary/20 transition-all hover:shadow-primary/40 hover:scale-105 active:scale-95 flex-1 sm:flex-none"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                {t("prompts.add")}
+              </Button>
+            </div>
+          )}
         </header>
 
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setActiveTab("providers")}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all ${
@@ -1299,21 +1364,11 @@ function App() {
                     <Button onClick={() => setIsPromptAddOpen(true)} variant="outline" className="border-primary/20 hover:bg-primary/10 hover:text-primary">
                       {t("prompts.createFirst")}
                     </Button>
-                    <Button onClick={() => importPromptMutation.mutate()} variant="ghost" disabled={importPromptMutation.isPending}>
-                      <Download className="mr-2 h-4 w-4" />
-                      {t("prompts.import")}
-                    </Button>
                   </div>
                 </div>
               </motion.div>
             ) : (
               <motion.div layout className="grid gap-4">
-                <div className="flex justify-end gap-2 mb-2">
-                  <Button onClick={() => importPromptMutation.mutate()} variant="ghost" size="sm" disabled={importPromptMutation.isPending}>
-                    <Download className="mr-2 h-4 w-4" />
-                    {t("prompts.import")}
-                  </Button>
-                </div>
                 <AnimatePresence mode="popLayout">
                   {Object.entries(prompts).map(([id, prompt]) => (
                     <motion.div

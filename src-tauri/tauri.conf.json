@@ -5,7 +5,7 @@
   "identifier": "com.openswitch.app",
   "build": {
     "frontendDist": "../dist",
-    "devUrl": "http://localhost:3000",
+    "devUrl": "http://localhost:9527",
     "beforeDevCommand": "pnpm run dev:renderer",
     "beforeBuildCommand": "pnpm run build:renderer"
   },
@@ -16,15 +16,18 @@
         "title": "Open Switch",
         "width": 900,
         "height": 600,
-        "minWidth": 800,
-        "minHeight": 500,
+        "minWidth": 600,
+        "minHeight": 400,
         "resizable": true,
         "fullscreen": false,
-        "center": true
+        "center": true,
+        "decorations": false
       }
     ],
+    "macOSPrivateApi": true,
     "security": {
-      "csp": "default-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' ipc: http://ipc.localhost"
+      "csp": "default-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' ipc: http://ipc.localhost",
+      "capabilities": ["default"]
     }
   },
   "bundle": {

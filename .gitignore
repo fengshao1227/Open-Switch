@@ -37,3 +37,4 @@ coverage/
 # Misc
 *.tgz
 .pnpm-store/
+.ace-tool/
