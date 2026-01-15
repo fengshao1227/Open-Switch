@@ -102,18 +102,28 @@ jobs:
           path: artifacts
 
       - name: Display structure of downloaded files
-        run: ls -R artifacts
+        run: |
+          echo "=== Artifacts directory structure ==="
+          ls -R artifacts
+          echo "=== Finding all files ==="
+          find artifacts -type f
+
+      - name: Prepare release files
+        run: |
+          mkdir -p release-files
+          # Copy all installer files to release-files directory
+          find artifacts -name "*.dmg" -exec cp {} release-files/ \;
+          find artifacts -name "*.deb" -exec cp {} release-files/ \;
+          find artifacts -name "*.AppImage" -exec cp {} release-files/ \;
+          find artifacts -name "*-setup.exe" -exec cp {} release-files/ \;
+          find artifacts -name "*.msi" -exec cp {} release-files/ \;
+          echo "=== Release files ==="
+          ls -lh release-files/
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            artifacts/macos-aarch64/*.dmg
-            artifacts/macos-x86_64/*.dmg
-            artifacts/linux-amd64/*.deb
-            artifacts/linux-amd64/*.AppImage
-            artifacts/windows-x86_64/*-setup.exe
-            artifacts/windows-x86_64/*.msi
+          files: release-files/*
           draft: false
           prerelease: false
           generate_release_notes: true
