@@ -80,6 +80,7 @@ impl McpServer {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OpenCodeModel {
+    #[serde(default, skip_serializing_if = "String::is_empty")]
     pub name: String,
     #[serde(default)]
     pub thinking: Option<bool>,
@@ -89,7 +90,7 @@ pub struct OpenCodeModel {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProviderOptions {
-    #[serde(rename = "baseURL")]
+    #[serde(rename = "baseURL", default, skip_serializing_if = "String::is_empty")]
     pub base_url: String,
     #[serde(rename = "apiKey", default, skip_serializing_if = "Option::is_none")]
     pub api_key: Option<String>,
@@ -97,11 +98,31 @@ pub struct ProviderOptions {
     pub headers: Option<HashMap<String, String>>,
 }
 
+impl Default for ProviderOptions {
+    fn default() -> Self {
+        Self {
+            base_url: String::new(),
+            api_key: None,
+            headers: None,
+        }
+    }
+}
+
+fn provider_options_is_empty(options: &ProviderOptions) -> bool {
+    options.base_url.is_empty()
+        && options.api_key.is_none()
+        && options.headers.as_ref().map_or(true, |headers| headers.is_empty())
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProviderConfig {
+    #[serde(default, skip_serializing_if = "String::is_empty")]
     pub npm: String,
+    #[serde(default, skip_serializing_if = "String::is_empty")]
     pub name: String,
+    #[serde(default, skip_serializing_if = "provider_options_is_empty")]
     pub options: ProviderOptions,
+    #[serde(default, skip_serializing_if = "HashMap::is_empty")]
     pub models: HashMap<String, OpenCodeModel>,
 }
 
